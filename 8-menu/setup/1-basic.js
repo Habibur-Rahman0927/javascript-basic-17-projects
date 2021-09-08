@@ -74,26 +74,64 @@ const menu = [
 ];
 
 const sectionCenter = document.querySelector(".section-center");
-
+const container = document.querySelector('.btn-container')
 window.addEventListener("DOMContentLoaded", function () {
-  let displayMenu = menu.map(function (item) {
-    // console.log(item);
+  displayMenuItems(menu)
+  displayMenuBtn(menu)
 
-    return `<article class="menu-item">
-          <img src=${item.img} alt=${item.title} class="photo" />
+
+});
+
+function displayMenuBtn(menu) {
+  const categories = menu.reduce((values, item) => {
+    if (!values.includes(item.category)) {
+      values.push(item.category);
+    }
+    return values;
+  }, ['all']);
+  const catrgoryBtns = categories.map((category) => {
+    return `<button class="filter-btn" type="button" data-id=${category}>${category}</button > `
+  }).join('');
+  container.innerHTML = catrgoryBtns
+  const filterBtn = document.querySelectorAll(".filter-btn");
+  filterItem(filterBtn)
+}
+
+
+function filterItem(filterBtn) {
+  filterBtn.forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      const category = e.currentTarget.dataset.id;
+      const newCategory = menu.filter((menuItem) => {
+        if (menuItem.category === category) {
+
+          return menuItem;
+        }
+      });
+      // console.log(newCategory)
+      if (category === 'all') {
+        displayMenuItems(menu);
+      } else {
+        displayMenuItems(newCategory);
+      }
+    })
+  })
+}
+
+function displayMenuItems(menuItems) {
+  let displayMenu = menuItems.map((item) => {
+    return `
+      < article class="menu-item" >
+        <img src=${item.img} class="photo" alt=${item.title}>
           <div class="item-info">
             <header>
               <h4>${item.title}</h4>
-              <h4 class="price">$${item.price}</h4>
+              <h4 class="price">$ ${item.price}</h4>
             </header>
-            <p class="item-text">
-              ${item.desc}
-            </p>
+            <p>${item.desc}</p>
           </div>
-        </article>`;
-  });
-  displayMenu = displayMenu.join("");
-  console.log(displayMenu);
-
+        </article>`
+  })
+  displayMenu = displayMenu.join('');
   sectionCenter.innerHTML = displayMenu;
-});
+}
